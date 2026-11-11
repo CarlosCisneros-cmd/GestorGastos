@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Color x:Key="Primario">#7C5CDB</Color>
+    <Color x:Key="PrimarioClaro">#A486F0</Color>
+    <Color x:Key="PrimarioSuave">#EDE6FF</Color>
+    <Color x:Key="PrimarioSuaveOscuro">#3A2F5C</Color>
+
+    <Color x:Key="Fondo">#FBF7F4</Color>
+    <Color x:Key="FondoOscuro">#16131C</Color>
+    <Color x:Key="Superficie">#FFFFFF</Color>
+    <Color x:Key="SuperficieOscuro">#221E2B</Color>
+    <Color x:Key="Texto">#2B2533</Color>
+    <Color x:Key="TextoOscuro">#F3EFF8</Color>
+    <Color x:Key="TextoSecundarioColor">#8A8294</Color>
+    <Color x:Key="TextoSecundarioOscuro">#A79FB3</Color>
+    <Color x:Key="Linea">#EEE7EA</Color>
+    <Color x:Key="LineaOscuro">#342E3F</Color>
+
+    <Color x:Key="Ingreso">#1F9D6B</Color>
+    <Color x:Key="IngresoSuave">#E2F6EC</Color>
+    <Color x:Key="Gasto">#E0526B</Color>
+    <Color x:Key="GastoSuave">#FDE7EB</Color>
+    <Color x:Key="Advertencia">#E59A2F</Color>
+    <Color x:Key="AdvertenciaSuave">#FDF0DC</Color>
+
+    <Color x:Key="Blanco">#FFFFFF</Color>
+    <Color x:Key="Negro">#000000</Color>
+
+</ResourceDictionary>

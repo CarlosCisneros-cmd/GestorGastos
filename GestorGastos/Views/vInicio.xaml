@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
+             x:Class="GestorGastos.Views.vInicio"
+             x:DataType="vm:InicioViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <RefreshView IsRefreshing="{Binding EstaRefrescando}" Command="{Binding CargarCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="18,16,18,24" Spacing="14">
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding Saludo}" Style="{StaticResource TextoSecundario}" />
+                        <Label Text="Gestor de Gastos" Style="{StaticResource Titulo}" />
+                    </VerticalStackLayout>
+                    <Border Grid.Column="1" WidthRequest="40" HeightRequest="40" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 20" VerticalOptions="Center"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                        <Label Text="{Binding Inicial}" FontAttributes="Bold" TextColor="{StaticResource Primario}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerAjustesCommand}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource TarjetaPrincipal}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Saldo disponible" TextColor="White" Opacity="0.85" FontSize="12" />
+                        <Label Text="{Binding DisponibleTexto}" TextColor="White" FontSize="30" FontAttributes="Bold" />
+                        <Label TextColor="White" Opacity="0.85" FontSize="11" Margin="0,0,0,8">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Total en cuentas " />
+                                    <Span Text="{Binding SaldoTotalTexto}" FontAttributes="Bold" />
+                                    <Span Text=" · Comprometido " />
+                                    <Span Text="{Binding ComprometidoTexto}" FontAttributes="Bold" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Border StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="10,8" BackgroundColor="#30FFFFFF">
+                                <VerticalStackLayout>
+                                    <Label Text="Ingresos del mes" TextColor="White" FontSize="11" />
+                                    <Label Text="{Binding IngresosTexto, StringFormat='+{0}'}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="10,8" BackgroundColor="#30FFFFFF">
+                                <VerticalStackLayout>
+                                    <Label Text="Gastos del mes" TextColor="White" FontSize="11" />
+                                    <Label Text="{Binding GastosTexto, StringFormat='−{0}'}" TextColor="White" FontSize="15" FontAttributes="Bold" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Mis cuentas" Style="{StaticResource Subtitulo}" />
+                    <Label Grid.Column="1" Text="Ver todas" Style="{StaticResource EnlaceSeccion}" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerCuentasCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+
+                <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never"
+                            IsVisible="{Binding Cuentas.Count, Converter={StaticResource EsCero}, ConverterParameter=invertir}">
+                    <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Cuentas}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:Cuenta">
+                                <Border Style="{StaticResource Chip}">
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Label Text="{Binding Icono}" />
+                                        <Label Text="{Binding Nombre}" FontSize="12" />
+                                        <Label Text="{Binding SaldoTexto}" FontSize="12" FontAttributes="Bold" />
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </ScrollView>
+
+                <Border Style="{StaticResource Tarjeta}" IsVisible="{Binding Cuentas.Count, Converter={StaticResource EsCero}}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Todavía no tienes cuentas. Crea tu primera cuenta para empezar a registrar movimientos." Style="{StaticResource TextoSecundario}" FontSize="13" />
+                        <Button Text="Crear cuenta" Command="{Binding NuevaCuentaCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="{Binding MesActual, StringFormat='Gastos por categoría · {0}'}" Style="{StaticResource Subtitulo}" />
+                <Border Style="{StaticResource Tarjeta}">
+                    <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding GastosPorCategoria}">
+                        <BindableLayout.EmptyView>
+                            <Label Text="Aún no registras gastos este mes." Style="{StaticResource TextoSecundario}" />
+                        </BindableLayout.EmptyView>
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:GastoPorCategoria">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto">
+                                    <Label Grid.RowSpan="2" Text="{Binding Icono}" FontSize="20" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding Nombre}" FontSize="13" FontAttributes="Bold" />
+                                    <Label Grid.Column="2" Text="{Binding TotalTexto}" FontSize="13" FontAttributes="Bold" />
+                                    <ProgressBar Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                                 Progress="{Binding Porcentaje}"
+                                                 ProgressColor="{Binding Color, Converter={StaticResource TextoAColor}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Próximos pagos" Style="{StaticResource Subtitulo}" />
+                    <Label Grid.Column="1" Text="Ver todos" Style="{StaticResource EnlaceSeccion}" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerProximosPagosCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+                <Border Style="{StaticResource Tarjeta}" Padding="14,6">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding ProximosPagos}">
+                        <BindableLayout.EmptyView>
+                            <Label Text="No tienes pagos pendientes." Style="{StaticResource TextoSecundario}" Margin="0,8" />
+                        </BindableLayout.EmptyView>
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:PagoPendienteResumen">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                                    <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{StaticResource AdvertenciaSuave}">
+                                        <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                        <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="14" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding VenceTexto}" Style="{StaticResource TextoSecundario}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2" Text="{Binding MontoTexto}" FontAttributes="Bold" TextColor="{StaticResource Gasto}" VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Movimientos recientes" Style="{StaticResource Subtitulo}" />
+                    <Label Grid.Column="1" Text="Ver todos" Style="{StaticResource EnlaceSeccion}" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerMovimientosCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+                <Border Style="{StaticResource Tarjeta}" Padding="14,6">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Recientes}">
+                        <BindableLayout.EmptyView>
+                            <VerticalStackLayout Spacing="8" Padding="0,8">
+                                <Label Text="Todavía no registras movimientos." Style="{StaticResource TextoSecundario}" />
+                                <Button Text="Registrar un movimiento" Style="{StaticResource BotonSecundario}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:InicioViewModel}}, Path=RegistrarCommand}" />
+                            </VerticalStackLayout>
+                        </BindableLayout.EmptyView>
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:TransaccionDetalle">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                                    <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{Binding ColorFondoIcono, Converter={StaticResource TextoAColor}}">
+                                        <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                        <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="14" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding Subtitulo}" Style="{StaticResource TextoSecundario}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2" Text="{Binding MontoTexto}" FontAttributes="Bold"
+                                           TextColor="{Binding ColorMonto, Converter={StaticResource TextoAColor}}" VerticalOptions="Center" />
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:InicioViewModel}}, Path=AbrirMovimientoCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

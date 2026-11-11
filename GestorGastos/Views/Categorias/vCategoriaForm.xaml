@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             x:Class="GestorGastos.Views.vCategoriaForm"
+             x:DataType="vm:CategoriaFormViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="12">
+
+            <Label Text="Nombre" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding Nombre}" Placeholder="Ej: Mascotas" MaxLength="40" />
+            </Border>
+
+            <Label Text="Tipo" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding Tipos}" SelectedItem="{Binding Tipo}" />
+            </Border>
+
+            <Label Text="Ícono" Style="{StaticResource Etiqueta}" />
+            <CollectionView ItemsSource="{Binding Iconos}" SelectionMode="Single" SelectedItem="{Binding IconoSeleccionado}" HeightRequest="150">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="8" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Grid Padding="2">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource PrimarioSuave}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                            <Label Text="{Binding .}" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" Padding="4" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Color" Style="{StaticResource Etiqueta}" />
+            <CollectionView ItemsSource="{Binding Colores}" SelectionMode="Single" SelectedItem="{Binding ColorSeleccionado}" HeightRequest="52">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="8" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Grid Padding="5">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource PrimarioSuave}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                            <BoxView Color="{Binding ., Converter={StaticResource TextoAColor}}" CornerRadius="16" WidthRequest="32" HeightRequest="32" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Guardar categoría" Command="{Binding GuardarCommand}" Margin="0,8,0,0" />
+            <Button Text="Eliminar categoría" Style="{StaticResource BotonPeligro}" Command="{Binding EliminarCommand}" IsVisible="{Binding PuedeEliminar}" />
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" IsVisible="{Binding EstaOcupado}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

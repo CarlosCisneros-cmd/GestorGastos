@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             x:Class="GestorGastos.Views.vLogin"
+             x:DataType="vm:LoginViewModel"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto" Padding="28,40,28,32">
+
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="Center" Spacing="10">
+            <Image Source="logo_app.png" WidthRequest="96" HeightRequest="96" HorizontalOptions="Center" />
+            <Label Text="Gestor de Gastos" Style="{StaticResource Titulo}" HorizontalOptions="Center" Margin="0,12,0,0" />
+            <Label Text="Controla tus ingresos y gastos de forma simple y segura"
+                   Style="{StaticResource TextoSecundario}" FontSize="14"
+                   HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="14">
+
+            <Border Style="{StaticResource Tarjeta}" Padding="16,14">
+                <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Image Source="google_logo.png" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" />
+                    <Label Text="Continuar con Google" FontAttributes="Bold" FontSize="15" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ContinuarConGoogleCommand}" />
+                </Border.GestureRecognizers>
+            </Border>
+
+            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="10" IsVisible="{Binding PuedeUsarHuella}">
+                <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Linea}, Dark={StaticResource LineaOscuro}}" VerticalOptions="Center" />
+                <Label Grid.Column="1" Text="o" Style="{StaticResource TextoSecundario}" />
+                <BoxView Grid.Column="2" HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Linea}, Dark={StaticResource LineaOscuro}}" VerticalOptions="Center" />
+            </Grid>
+
+            <VerticalStackLayout Spacing="8" IsVisible="{Binding PuedeUsarHuella}">
+                <Border WidthRequest="72" HeightRequest="72" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 36"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}"
+                        HorizontalOptions="Center">
+                    <Image Source="huella.png" WidthRequest="40" HeightRequest="40" />
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding IngresarConHuellaCommand}" />
+                    </Border.GestureRecognizers>
+                </Border>
+                <Label Text="Ingresar con huella digital" Style="{StaticResource EnlaceSeccion}" FontSize="14" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <Label Text="Después de tu primer inicio con Google podrás activar el ingreso con huella en Ajustes."
+                   Style="{StaticResource TextoSecundario}" HorizontalTextAlignment="Center"
+                   IsVisible="{Binding PuedeUsarHuella, Converter={StaticResource InvertirBool}}" />
+
+            <Button Text="Entrar en modo prueba"
+                    Style="{StaticResource BotonTexto}"
+                    IsVisible="{Binding EsModoDesarrollo}"
+                    Command="{Binding EntrarModoPruebaCommand}" />
+
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" IsVisible="{Binding EstaOcupado}" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

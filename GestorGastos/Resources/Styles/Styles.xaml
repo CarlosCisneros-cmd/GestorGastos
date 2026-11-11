@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Fondo}, Dark={StaticResource FondoOscuro}}" />
+        <Setter Property="Shell.NavBarHasShadow" Value="False" />
+    </Style>
+
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource TextoSecundarioColor}, Dark={StaticResource TextoSecundarioOscuro}}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="Editor">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource TextoSecundarioColor}, Dark={StaticResource TextoSecundarioOscuro}}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+        <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource TextoSecundarioColor}, Dark={StaticResource TextoSecundarioOscuro}}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="DatePicker">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+    </Style>
+
+    <Style TargetType="Switch">
+        <Setter Property="OnColor" Value="{StaticResource PrimarioClaro}" />
+        <Setter Property="ThumbColor" Value="{StaticResource Primario}" />
+    </Style>
+
+    <Style TargetType="ProgressBar">
+        <Setter Property="ProgressColor" Value="{StaticResource Primario}" />
+    </Style>
+
+    <Style TargetType="ActivityIndicator">
+        <Setter Property="Color" Value="{StaticResource Primario}" />
+    </Style>
+
+    <Style TargetType="RefreshView">
+        <Setter Property="RefreshColor" Value="{StaticResource Primario}" />
+    </Style>
+
+    <Style TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource Primario}" />
+        <Setter Property="TextColor" Value="{StaticResource Blanco}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+    </Style>
+
+    <Style x:Key="BotonSecundario" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primario}, Dark={StaticResource PrimarioClaro}}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="16,12" />
+    </Style>
+
+    <Style x:Key="BotonPeligro" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Gasto}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="BorderWidth" Value="0" />
+    </Style>
+
+    <Style x:Key="BotonTexto" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primario}, Dark={StaticResource PrimarioClaro}}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="MinimumHeightRequest" Value="32" />
+    </Style>
+
+    <Style x:Key="BotonCircular" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primario}, Dark={StaticResource PrimarioClaro}}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="WidthRequest" Value="40" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinimumHeightRequest" Value="40" />
+    </Style>
+
+    <Style x:Key="Tarjeta" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Superficie}, Dark={StaticResource SuperficieOscuro}}" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Linea}, Dark={StaticResource LineaOscuro}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+        <Setter Property="Padding" Value="14" />
+    </Style>
+
+    <Style x:Key="TarjetaPrincipal" TargetType="Border">
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 22" />
+        <Setter Property="Padding" Value="18" />
+        <Setter Property="Background">
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#7C5CDB" Offset="0" />
+                <GradientStop Color="#A486F0" Offset="1" />
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Campo" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Superficie}, Dark={StaticResource SuperficieOscuro}}" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Linea}, Dark={StaticResource LineaOscuro}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="Padding" Value="12,6" />
+    </Style>
+
+    <Style x:Key="Chip" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Superficie}, Dark={StaticResource SuperficieOscuro}}" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Linea}, Dark={StaticResource LineaOscuro}}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 20" />
+        <Setter Property="Padding" Value="12,7" />
+    </Style>
+
+    <Style x:Key="IconoCirculo" TargetType="Border">
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="WidthRequest" Value="40" />
+        <Setter Property="HeightRequest" Value="40" />
+    </Style>
+
+    <Style x:Key="Titulo" TargetType="Label">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+    </Style>
+
+    <Style x:Key="Subtitulo" TargetType="Label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+    </Style>
+
+    <Style x:Key="TextoSecundario" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextoSecundarioColor}, Dark={StaticResource TextoSecundarioOscuro}}" />
+    </Style>
+
+    <Style x:Key="Etiqueta" TargetType="Label">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextTransform" Value="Uppercase" />
+        <Setter Property="CharacterSpacing" Value="0.5" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextoSecundarioColor}, Dark={StaticResource TextoSecundarioOscuro}}" />
+    </Style>
+
+    <Style x:Key="EnlaceSeccion" TargetType="Label">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primario}, Dark={StaticResource PrimarioClaro}}" />
+    </Style>
+
+    <Style TargetType="Shell" ApplyToDerivedTypes="True">
+        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource Fondo}, Dark={StaticResource FondoOscuro}}" />
+        <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+        <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource Texto}, Dark={StaticResource TextoOscuro}}" />
+        <Setter Property="Shell.NavBarHasShadow" Value="False" />
+        <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource Superficie}, Dark={StaticResource SuperficieOscuro}}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource Primario}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource Primario}" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource TextoSecundarioColor}, Dark={StaticResource TextoSecundarioOscuro}}" />
+    </Style>
+
+</ResourceDictionary>

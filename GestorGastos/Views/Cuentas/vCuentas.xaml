@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
+             x:Class="GestorGastos.Views.vCuentas"
+             x:DataType="vm:CuentasViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Nueva" Command="{Binding NuevaCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*" Padding="18,12,18,0" RowSpacing="12">
+
+        <Border Style="{StaticResource TarjetaPrincipal}">
+            <VerticalStackLayout>
+                <Label Text="Total en todas las cuentas" TextColor="White" Opacity="0.85" FontSize="12" />
+                <Label Text="{Binding TotalTexto}" TextColor="White" FontSize="26" FontAttributes="Bold" />
+            </VerticalStackLayout>
+        </Border>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Cuentas}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="20" Spacing="10">
+                    <Label Text="Aún no tienes cuentas." Style="{StaticResource TextoSecundario}" FontSize="14" HorizontalOptions="Center" />
+                    <Button Text="Crear mi primera cuenta" Command="{Binding NuevaCommand}" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Cuenta">
+                    <Border Style="{StaticResource Tarjeta}">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{Binding Color, Converter={StaticResource TextoAColor}}">
+                                <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="15" />
+                                <Label Text="{Binding Tipo}" Style="{StaticResource TextoSecundario}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" VerticalOptions="Center">
+                                <Label Text="{Binding SaldoTexto}" FontAttributes="Bold" FontSize="15" HorizontalOptions="End" />
+                                <Label Text="{Binding Moneda}" Style="{StaticResource TextoSecundario}" HorizontalOptions="End" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CuentasViewModel}}, Path=EditarCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="24" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
+             x:Class="GestorGastos.Views.vCategorias"
+             x:DataType="vm:CategoriasViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Nueva" Command="{Binding NuevaCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*" Padding="18,12,18,0" RowSpacing="12">
+
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Button Text="Gastos" Style="{StaticResource BotonSecundario}" Command="{Binding CambiarTipoCommand}" CommandParameter="Gasto">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding MostrandoGastos}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Primario}" />
+                        <Setter Property="TextColor" Value="White" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Grid.Column="1" Text="Ingresos" Style="{StaticResource BotonSecundario}" Command="{Binding CambiarTipoCommand}" CommandParameter="Ingreso">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding MostrandoIngresos}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Primario}" />
+                        <Setter Property="TextColor" Value="White" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </Grid>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Categorias}" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.EmptyView>
+                <Label Text="No hay categorías." Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" Margin="20" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Categoria">
+                    <Border Style="{StaticResource Tarjeta}" Padding="12,10">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{Binding Color, Converter={StaticResource TextoAColor}}">
+                                <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{Binding Nombre}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="›" FontSize="22" Style="{StaticResource TextoSecundario}" VerticalOptions="Center" />
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CategoriasViewModel}}, Path=EditarCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="24" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+    </Grid>
+</ContentPage>

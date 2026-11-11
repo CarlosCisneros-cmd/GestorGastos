@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:GestorGastos.Views"
+       x:Class="GestorGastos.AppShell"
+       Shell.FlyoutBehavior="Disabled">
+
+    <ShellContent Route="login"
+                  Shell.NavBarIsVisible="False"
+                  Shell.TabBarIsVisible="False"
+                  ContentTemplate="{DataTemplate views:vLogin}" />
+
+    <TabBar Route="principal">
+        <Tab Title="Inicio" Icon="tab_inicio.png">
+            <ShellContent Route="inicio" ContentTemplate="{DataTemplate views:vInicio}" />
+        </Tab>
+        <Tab Title="Movimientos" Icon="tab_movimientos.png">
+            <ShellContent Route="movimientos" ContentTemplate="{DataTemplate views:vMovimientos}" />
+        </Tab>
+        <Tab Title="Registrar" Icon="tab_registrar.png">
+            <ShellContent Route="registrar" ContentTemplate="{DataTemplate views:vRegistrarMovimiento}" />
+        </Tab>
+        <Tab Title="Presupuestos" Icon="tab_presupuestos.png">
+            <ShellContent Route="presupuestos" ContentTemplate="{DataTemplate views:vPresupuestos}" />
+        </Tab>
+        <Tab Title="Más" Icon="tab_mas.png">
+            <ShellContent Route="mas" ContentTemplate="{DataTemplate views:vMas}" />
+        </Tab>
+    </TabBar>
+
+</Shell>

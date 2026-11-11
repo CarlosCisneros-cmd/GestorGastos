@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
+             x:Class="GestorGastos.Views.vMas"
+             x:DataType="vm:MasViewModel"
+             Title="Más">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="12">
+
+            <Border Style="{StaticResource Tarjeta}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border WidthRequest="48" HeightRequest="48" StrokeThickness="0" StrokeShape="RoundRectangle 24"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                        <Label Text="{Binding Inicial}" FontAttributes="Bold" FontSize="18" TextColor="{StaticResource Primario}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="15" />
+                        <Label Text="{Binding Correo}" Style="{StaticResource TextoSecundario}" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource Tarjeta}" Padding="14,4">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Opciones}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:OpcionMenu">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,10">
+                                <Border Style="{StaticResource IconoCirculo}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                                    <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Titulo}" FontAttributes="Bold" FontSize="14" />
+                                    <Label Text="{Binding Descripcion}" Style="{StaticResource TextoSecundario}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="›" FontSize="22" Style="{StaticResource TextoSecundario}" VerticalOptions="Center" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MasViewModel}}, Path=AbrirCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

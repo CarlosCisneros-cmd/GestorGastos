@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             x:Class="GestorGastos.Views.vAjustes"
+             x:DataType="vm:AjustesViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="12">
+
+            <Border Style="{StaticResource Tarjeta}">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <Border WidthRequest="48" HeightRequest="48" StrokeThickness="0" StrokeShape="RoundRectangle 24"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                        <Label Text="{Binding Inicial}" FontAttributes="Bold" FontSize="18" TextColor="{StaticResource Primario}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="15" />
+                        <Label Text="{Binding Correo}" Style="{StaticResource TextoSecundario}" />
+                    </VerticalStackLayout>
+                    <Image Grid.Column="2" Source="google_logo.png" WidthRequest="22" HeightRequest="22" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Label Text="Seguridad" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Tarjeta}" Padding="14,6">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Image Source="huella.png" WidthRequest="22" HeightRequest="22" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Acceso con huella digital" FontAttributes="Bold" />
+                            <Label Text="Ingresar sin abrir Google" Style="{StaticResource TextoSecundario}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="2" IsToggled="{Binding HuellaActiva}" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="⏱" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Bloqueo automático" FontAttributes="Bold" />
+                            <Label Text="Al salir de la app" Style="{StaticResource TextoSecundario}" />
+                        </VerticalStackLayout>
+                        <Picker Grid.Column="2" ItemsSource="{Binding OpcionesBloqueo}" SelectedItem="{Binding BloqueoSeleccionado}"
+                                WidthRequest="120" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Preferencias" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Tarjeta}" Padding="14,6">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="💲" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Moneda predeterminada" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Picker Grid.Column="2" ItemsSource="{Binding Monedas}" SelectedItem="{Binding MonedaSeleccionada}"
+                                WidthRequest="90" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="🌙" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Tema" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Picker Grid.Column="2" ItemsSource="{Binding Temas}" SelectedItem="{Binding TemaSeleccionado}"
+                                WidthRequest="100" HorizontalTextAlignment="End" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="🔔" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Alertas de presupuesto" FontAttributes="Bold" />
+                            <Label Text="Aviso al 75% y al excederse" Style="{StaticResource TextoSecundario}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="2" IsToggled="{Binding AlertasActivas}" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="🏷️" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Categorías" FontAttributes="Bold" />
+                            <Label Text="Administrar categorías" Style="{StaticResource TextoSecundario}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22" Style="{StaticResource TextoSecundario}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerCategoriasCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="🏦" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Cuentas" FontAttributes="Bold" />
+                            <Label Text="Bancos, efectivo y tarjetas" Style="{StaticResource TextoSecundario}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22" Style="{StaticResource TextoSecundario}" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding VerCuentasCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Cerrar sesión" Style="{StaticResource BotonPeligro}" Command="{Binding CerrarSesionCommand}" Margin="0,8,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

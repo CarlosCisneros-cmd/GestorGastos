@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:conv="clr-namespace:GestorGastos.Converters"
+             x:Class="GestorGastos.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:TextoAColorConverter x:Key="TextoAColor" />
+            <conv:InvertirBoolConverter x:Key="InvertirBool" />
+            <conv:EsCeroConverter x:Key="EsCero" />
+            <conv:ProgresoAColorConverter x:Key="ProgresoAColor" />
+            <conv:SeleccionAColorConverter x:Key="SeleccionAColor" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
