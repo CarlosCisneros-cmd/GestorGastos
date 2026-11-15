@@ -1,8 +1,60 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              x:Class="GestorGastos.Views.vProximosPagos"
-             Title="Próximos pagos">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Próximos pagos" />
+             x:DataType="vm:ProximosPagosViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Nuevo" Command="{Binding NuevoCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="18,8,18,0" RowSpacing="10">
+
+        <Border Style="{StaticResource TarjetaPrincipal}">
+            <VerticalStackLayout>
+                <Label Text="Total por pagar" TextColor="White" Opacity="0.85" FontSize="12" />
+                <Label Text="{Binding TotalPendienteTexto}" TextColor="White" FontSize="26" FontAttributes="Bold" />
+                <Label Text="{Binding CantidadVencidos, StringFormat='{0} pago(s) vencido(s)'}" TextColor="White" FontSize="12" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Button Grid.Row="1" Text="🔁 Ver pagos recurrentes" Style="{StaticResource BotonSecundario}" Command="{Binding VerRecurrentesCommand}" />
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Pagos}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No tienes pagos pendientes." Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" Margin="0,30" FontSize="14" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:PagoProximoDetalle">
+                    <Border Style="{StaticResource Tarjeta}">
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12">
+                            <Border Grid.RowSpan="2" Style="{StaticResource IconoCirculo}" BackgroundColor="{StaticResource AdvertenciaSuave}">
+                                <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{Binding Nombre}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                            <Label Grid.Column="1" Grid.Row="1" Text="{Binding EstadoTexto}" FontSize="12"
+                                   TextColor="{Binding ColorEstado, Converter={StaticResource TextoAColor}}" />
+                            <Label Grid.Column="2" Text="{Binding MontoTexto}" FontAttributes="Bold" HorizontalOptions="End" />
+                            <Button Grid.Column="2" Grid.Row="1" Text="Pagar" Style="{StaticResource BotonTexto}" FontSize="12"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProximosPagosViewModel}}, Path=MarcarPagadoCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ProximosPagosViewModel}}, Path=EditarCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="24" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+    </Grid>
 </ContentPage>

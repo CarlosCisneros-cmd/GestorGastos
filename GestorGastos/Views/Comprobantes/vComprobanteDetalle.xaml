@@ -1,8 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
              x:Class="GestorGastos.Views.vComprobanteDetalle"
-             Title="Comprobante">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Detalle del comprobante" />
+             x:DataType="vm:ComprobanteDetalleViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="12">
+
+            <Border StrokeThickness="0" StrokeShape="RoundRectangle 16" HeightRequest="420"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                <Image Source="{Binding Comprobante.RutaImagen}" Aspect="AspectFit" />
+            </Border>
+
+            <Border Style="{StaticResource Tarjeta}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{Binding Comprobante.Titulo}" Style="{StaticResource Subtitulo}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding Comprobante.CategoriaNombre}" Style="{StaticResource TextoSecundario}" />
+                        <Label Grid.Column="1" Text="{Binding Comprobante.MontoTexto}" FontAttributes="Bold" FontSize="18" TextColor="{StaticResource Gasto}" />
+                    </Grid>
+                    <Label Text="{Binding Comprobante.FechaTexto, StringFormat='Fecha del gasto: {0}'}" Style="{StaticResource TextoSecundario}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Ver movimiento" Style="{StaticResource BotonSecundario}" Command="{Binding VerMovimientoCommand}" />
+            <Button Text="Ver texto detectado" Style="{StaticResource BotonTexto}" Command="{Binding AlternarTextoCommand}" />
+            <Border Style="{StaticResource Tarjeta}" IsVisible="{Binding MostrarTexto}">
+                <Label Text="{Binding Comprobante.TextoDetectado}" FontFamily="monospace" FontSize="12" />
+            </Border>
+
+            <Button Text="Eliminar comprobante" Style="{StaticResource BotonPeligro}" Command="{Binding EliminarCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
