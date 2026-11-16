@@ -1,8 +1,64 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
              x:Class="GestorGastos.Views.vMetaAhorroForm"
-             Title="Meta de ahorro">
-    <controls:EnConstruccionView Parte="Parte 3" Descripcion="Nueva meta de ahorro" />
+             x:DataType="vm:MetaAhorroFormViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="10">
+
+            <Label Text="Nombre de la meta" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding Nombre}" Placeholder="Ej: Laptop nueva" MaxLength="60" />
+            </Border>
+
+            <Label Text="Monto objetivo" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding MontoObjetivoTexto}" Placeholder="0,00" Keyboard="Numeric" />
+            </Border>
+
+            <Label Text="{Binding AhorradoTexto}" Style="{StaticResource TextoSecundario}" IsVisible="{Binding EsEdicion}" />
+
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Tiene fecha límite" FontAttributes="Bold" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding TieneFechaLimite}" />
+            </Grid>
+            <Border Style="{StaticResource Campo}" IsVisible="{Binding TieneFechaLimite}">
+                <DatePicker Date="{Binding FechaLimite}" Format="dd 'de' MMMM 'de' yyyy" />
+            </Border>
+
+            <Label Text="Ícono" Style="{StaticResource Etiqueta}" />
+            <CollectionView ItemsSource="{Binding Iconos}" SelectionMode="Single" SelectedItem="{Binding IconoSeleccionado}" HeightRequest="100">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="8" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <Grid Padding="2">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource PrimarioSuave}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                            <Label Text="{Binding .}" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" Padding="4" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Guardar meta" Command="{Binding GuardarCommand}" Margin="0,8,0,0" />
+            <Button Text="Eliminar meta" Style="{StaticResource BotonPeligro}" Command="{Binding EliminarCommand}" IsVisible="{Binding EsEdicion}" />
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" IsVisible="{Binding EstaOcupado}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

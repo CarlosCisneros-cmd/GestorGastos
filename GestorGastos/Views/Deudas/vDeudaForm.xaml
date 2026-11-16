@@ -1,8 +1,66 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
              x:Class="GestorGastos.Views.vDeudaForm"
-             Title="Deuda">
-    <controls:EnConstruccionView Parte="Parte 3" Descripcion="Nueva deuda" />
+             x:DataType="vm:DeudaFormViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="10">
+
+            <Label Text="Nombre de la deuda" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding Nombre}" Placeholder="Ej: Préstamo banco, celular a cuotas" MaxLength="60" />
+            </Border>
+
+            <Label Text="Monto de la deuda" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding MontoTexto}" Placeholder="0,00" Keyboard="Numeric" />
+            </Border>
+
+            <Label Text="Número de cuotas mensuales" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding NumeroCuotasTexto}" Keyboard="Numeric" />
+            </Border>
+
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout>
+                    <Label Text="El monto ya incluye intereses" FontAttributes="Bold" />
+                    <Label Text="Desactívalo para sumar una tasa de interés" Style="{StaticResource TextoSecundario}" />
+                </VerticalStackLayout>
+                <Switch Grid.Column="1" IsToggled="{Binding InteresIncluido}" VerticalOptions="Center" />
+            </Grid>
+
+            <VerticalStackLayout Spacing="6" IsVisible="{Binding InteresIncluido, Converter={StaticResource InvertirBool}}">
+                <Label Text="Tasa de interés total (%)" Style="{StaticResource Etiqueta}" />
+                <Border Style="{StaticResource Campo}">
+                    <Entry Text="{Binding TasaTexto}" Keyboard="Numeric" />
+                </Border>
+            </VerticalStackLayout>
+
+            <Label Text="Fecha de la primera cuota" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <DatePicker Date="{Binding FechaPrimeraCuota}" Format="dd 'de' MMMM 'de' yyyy" />
+            </Border>
+
+            <Label Text="Cuenta con la que pagas" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding Cuentas}" SelectedItem="{Binding CuentaSeleccionada}" Title="Selecciona una cuenta" />
+            </Border>
+
+            <Label Text="Notas (opcional)" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding Notas}" MaxLength="200" />
+            </Border>
+
+            <Border Style="{StaticResource Tarjeta}" BackgroundColor="{StaticResource PrimarioSuave}" StrokeThickness="0">
+                <Label Text="{Binding VistaPrevia}" FontSize="13" TextColor="{StaticResource Primario}" FontAttributes="Bold" />
+            </Border>
+
+            <Button Text="Guardar deuda" Command="{Binding GuardarCommand}" Margin="0,8,0,0" />
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" IsVisible="{Binding EstaOcupado}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

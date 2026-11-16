@@ -1,8 +1,42 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
              x:Class="GestorGastos.Views.vPresupuestoForm"
-             Title="Presupuesto">
-    <controls:EnConstruccionView Parte="Parte 3" Descripcion="Nuevo presupuesto" />
+             x:DataType="vm:PresupuestoFormViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="10">
+
+            <Label Text="Categoría" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding Categorias}" SelectedItem="{Binding CategoriaSeleccionada}" Title="Selecciona una categoría" />
+            </Border>
+
+            <Label Text="Nombre (opcional)" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding Nombre}" Placeholder="Si lo dejas vacío se usa el nombre de la categoría" MaxLength="60" />
+            </Border>
+
+            <Label Text="Límite de gasto" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding MontoTexto}" Placeholder="0,00" Keyboard="Numeric" />
+            </Border>
+
+            <Label Text="Período" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding PeriodosDisponibles}" SelectedItem="{Binding Periodo}" />
+            </Border>
+
+            <Border Style="{StaticResource Tarjeta}" BackgroundColor="{StaticResource AdvertenciaSuave}" StrokeThickness="0">
+                <Label Text="🔔 Te avisaremos cuando gastes el 75% de este límite y cuando lo superes." FontSize="13" TextColor="#8A5A12" />
+            </Border>
+
+            <Button Text="Guardar presupuesto" Command="{Binding GuardarCommand}" Margin="0,8,0,0" />
+            <Button Text="Eliminar presupuesto" Style="{StaticResource BotonPeligro}" Command="{Binding EliminarCommand}" IsVisible="{Binding EsEdicion}" />
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" IsVisible="{Binding EstaOcupado}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
