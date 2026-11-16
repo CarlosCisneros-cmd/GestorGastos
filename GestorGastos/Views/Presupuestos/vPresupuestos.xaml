@@ -1,8 +1,86 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              x:Class="GestorGastos.Views.vPresupuestos"
-             Title="Presupuestos">
-    <controls:EnConstruccionView Parte="Parte 3" Descripcion="Presupuestos y alertas" />
+             x:DataType="vm:PresupuestosViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Nuevo" Command="{Binding NuevoCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <RefreshView IsRefreshing="{Binding EstaRefrescando}" Command="{Binding CargarCommand}">
+        <CollectionView ItemsSource="{Binding Presupuestos}" SelectionMode="None" Margin="18,8,18,0">
+            <CollectionView.Header>
+                <VerticalStackLayout Spacing="10" Margin="0,0,0,10">
+
+                    <Border Style="{StaticResource Tarjeta}" BackgroundColor="{StaticResource GastoSuave}" StrokeThickness="0" IsVisible="{Binding HayExcedidos}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Text="⚠️" FontSize="20" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding MensajeExcedidos}" TextColor="#A8324A" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource Tarjeta}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Style="{StaticResource TextoSecundario}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding MesTexto}" />
+                                        <Span Text=" · gastado de " />
+                                        <Span Text="{Binding TotalLimiteTexto}" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label Text="{Binding TotalGastadoTexto}" FontSize="24" FontAttributes="Bold" />
+                            <ProgressBar Progress="{Binding ProgresoTotal}" ProgressColor="{Binding ProgresoTotal, Converter={StaticResource ProgresoAColor}}" Margin="0,6" />
+                            <Label Text="{Binding RestanteTotalTexto}" Style="{StaticResource TextoSecundario}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Label Text="Recibirás una alerta cuando un presupuesto llegue al 75% y cuando lo superes." Style="{StaticResource TextoSecundario}" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="20" Spacing="10">
+                    <Label Text="Todavía no tienes presupuestos." Style="{StaticResource TextoSecundario}" FontSize="14" HorizontalOptions="Center" />
+                    <Button Text="Crear presupuesto" Command="{Binding NuevoCommand}" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:PresupuestoProgreso">
+                    <Border Style="{StaticResource Tarjeta}">
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Titulo}" FontAttributes="Bold" FontSize="14" />
+                                <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="8,2"
+                                        BackgroundColor="{Binding ColorFondoEstado, Converter={StaticResource TextoAColor}}">
+                                    <Label Text="{Binding PorcentajeTexto}" FontSize="11" FontAttributes="Bold"
+                                           TextColor="{Binding ColorEstado, Converter={StaticResource TextoAColor}}" />
+                                </Border>
+                            </Grid>
+                            <ProgressBar Progress="{Binding Progreso}" ProgressColor="{Binding ColorEstado, Converter={StaticResource TextoAColor}}" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding DetalleTexto}" Style="{StaticResource TextoSecundario}" />
+                                <Label Grid.Column="1" Text="{Binding RestanteTexto}" FontSize="12"
+                                       TextColor="{Binding ColorEstado, Converter={StaticResource TextoAColor}}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PresupuestosViewModel}}, Path=EditarCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="24" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+    </RefreshView>
 </ContentPage>

@@ -1,8 +1,61 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              xmlns:controls="clr-namespace:GestorGastos.Controls"
              x:Class="GestorGastos.Views.vMetasAhorro"
-             Title="Metas de ahorro">
-    <controls:EnConstruccionView Parte="Parte 3" Descripcion="Metas de ahorro" />
+             x:DataType="vm:MetasAhorroViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Nueva" Command="{Binding NuevaCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <CollectionView ItemsSource="{Binding Metas}" SelectionMode="None" Margin="18,8,18,0">
+        <CollectionView.Header>
+            <Border Style="{StaticResource TarjetaPrincipal}" Margin="0,0,0,10">
+                <VerticalStackLayout>
+                    <Label Text="Total ahorrado en tus metas" TextColor="White" Opacity="0.85" FontSize="12" />
+                    <Label Text="{Binding TotalAhorradoTexto}" TextColor="White" FontSize="26" FontAttributes="Bold" />
+                </VerticalStackLayout>
+            </Border>
+        </CollectionView.Header>
+        <CollectionView.EmptyView>
+            <VerticalStackLayout Padding="20" Spacing="10">
+                <Label Text="Crea una meta para empezar a ahorrar." Style="{StaticResource TextoSecundario}" FontSize="14" HorizontalOptions="Center" />
+                <Button Text="Crear meta" Command="{Binding NuevaCommand}" />
+            </VerticalStackLayout>
+        </CollectionView.EmptyView>
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="m:MetaAhorroItem">
+                <Border Style="{StaticResource Tarjeta}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Grid WidthRequest="78" HeightRequest="78" VerticalOptions="Center">
+                            <controls:AnilloProgreso Progreso="{Binding Progreso}" ColorAnillo="{Binding ColorAnillo, Converter={StaticResource TextoAColor}}" />
+                            <Label Text="{Binding PorcentajeTexto}" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Grid>
+                        <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                            <Label Text="{Binding Titulo}" FontAttributes="Bold" FontSize="15" />
+                            <Label Text="{Binding AvanceTexto}" Style="{StaticResource TextoSecundario}" />
+                            <Label Text="{Binding FechaTexto}" Style="{StaticResource TextoSecundario}" />
+                            <Button Text="+ Aportar" Style="{StaticResource BotonTexto}" HorizontalOptions="Start" FontSize="13"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MetasAhorroViewModel}}, Path=AportarCommand}"
+                                    CommandParameter="{Binding .}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MetasAhorroViewModel}}, Path=EditarCommand}"
+                                              CommandParameter="{Binding .}" />
+                    </Border.GestureRecognizers>
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.Footer>
+            <BoxView HeightRequest="24" Color="Transparent" />
+        </CollectionView.Footer>
+    </CollectionView>
 </ContentPage>
