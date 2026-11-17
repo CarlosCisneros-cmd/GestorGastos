@@ -1,8 +1,54 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              x:Class="GestorGastos.Views.vRecurrentes"
-             Title="Pagos recurrentes">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Pagos recurrentes" />
+             x:DataType="vm:RecurrentesViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Nuevo" Command="{Binding NuevoCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <CollectionView ItemsSource="{Binding Recurrentes}" SelectionMode="None" Margin="18,8,18,0">
+        <CollectionView.Header>
+            <Label Text="Los pagos recurrentes se registran solos en la fecha indicada y aparecen en Próximos pagos."
+                   Style="{StaticResource TextoSecundario}" FontSize="13" Margin="0,0,0,10" />
+        </CollectionView.Header>
+        <CollectionView.EmptyView>
+            <VerticalStackLayout Padding="20" Spacing="10">
+                <Label Text="No tienes pagos recurrentes." Style="{StaticResource TextoSecundario}" FontSize="14" HorizontalOptions="Center" />
+                <Button Text="Crear pago recurrente" Command="{Binding NuevoCommand}" />
+            </VerticalStackLayout>
+        </CollectionView.EmptyView>
+        <CollectionView.ItemsLayout>
+            <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="m:RecurrenteDetalle">
+                <Border Style="{StaticResource Tarjeta}" Opacity="{Binding Opacidad}">
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12">
+                        <Border Grid.RowSpan="2" Style="{StaticResource IconoCirculo}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1" Text="{Binding Nombre}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Detalle}" Style="{StaticResource TextoSecundario}" />
+                        <Label Grid.Column="2" Text="{Binding MontoTexto}" FontAttributes="Bold" HorizontalOptions="End" />
+                        <Button Grid.Column="2" Grid.Row="1" Text="{Binding TextoBotonEstado}" Style="{StaticResource BotonTexto}" FontSize="12"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RecurrentesViewModel}}, Path=CambiarEstadoCommand}"
+                                CommandParameter="{Binding .}" />
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RecurrentesViewModel}}, Path=EditarCommand}"
+                                              CommandParameter="{Binding .}" />
+                    </Border.GestureRecognizers>
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        <CollectionView.Footer>
+            <BoxView HeightRequest="24" Color="Transparent" />
+        </CollectionView.Footer>
+    </CollectionView>
 </ContentPage>

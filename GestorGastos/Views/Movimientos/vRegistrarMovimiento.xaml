@@ -1,8 +1,145 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              x:Class="GestorGastos.Views.vRegistrarMovimiento"
-             Title="Registrar">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Registrar movimiento" />
+             x:DataType="vm:RegistrarMovimientoViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,28" Spacing="12">
+
+            <Border Style="{StaticResource Campo}" Padding="4" IsVisible="{Binding PuedeEditar}">
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="4">
+                    <Button Text="Gasto" Style="{StaticResource BotonTexto}" Command="{Binding CambiarTipoCommand}" CommandParameter="Gasto" CornerRadius="12">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding EsGasto}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource GastoSuave}" />
+                                <Setter Property="TextColor" Value="{StaticResource Gasto}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    <Button Grid.Column="1" Text="Ingreso" Style="{StaticResource BotonTexto}" Command="{Binding CambiarTipoCommand}" CommandParameter="Ingreso" CornerRadius="12">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding EsIngreso}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource IngresoSuave}" />
+                                <Setter Property="TextColor" Value="{StaticResource Ingreso}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    <Button Grid.Column="2" Text="Transferencia" Style="{StaticResource BotonTexto}" Command="{Binding CambiarTipoCommand}" CommandParameter="Transferencia" CornerRadius="12">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding EsTransferencia}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource PrimarioSuave}" />
+                                <Setter Property="TextColor" Value="{StaticResource Primario}" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource Tarjeta}" IsVisible="{Binding EsTransferenciaGuardada}" BackgroundColor="{StaticResource PrimarioSuave}">
+                <Label Text="Esta es una transferencia entre tus cuentas. Las transferencias no se editan: si te equivocaste, elimínala y créala de nuevo."
+                       FontSize="13" TextColor="{StaticResource Primario}" />
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding PuedeEditar}">
+                <Button Text="📷 Escanear factura" Style="{StaticResource BotonSecundario}" Command="{Binding EscanearFacturaCommand}" />
+                <Button Grid.Column="1" Text="🖼 Desde galería" Style="{StaticResource BotonSecundario}" Command="{Binding AdjuntarDeGaleriaCommand}" />
+            </Grid>
+
+            <HorizontalStackLayout Spacing="10" IsVisible="{Binding LeyendoFactura}" HorizontalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding LeyendoFactura}" HeightRequest="24" WidthRequest="24" />
+                <Label Text="Leyendo la factura..." VerticalOptions="Center" Style="{StaticResource TextoSecundario}" FontSize="13" />
+            </HorizontalStackLayout>
+
+            <Border Style="{StaticResource Tarjeta}" IsVisible="{Binding TieneComprobante}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 10" WidthRequest="74" HeightRequest="96">
+                        <Image Source="{Binding RutaComprobante}" Aspect="AspectFill" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                        <Label Text="{Binding MensajeDeteccion}" FontSize="13" />
+                        <Label Text="Comprobante adjunto" FontAttributes="Bold" />
+                        <Button Text="Quitar foto" Style="{StaticResource BotonPeligro}" Padding="0" HorizontalOptions="Start"
+                                Command="{Binding QuitarComprobanteCommand}" IsVisible="{Binding PuedeEditar}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding DatosDetectados}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource IngresoSuave}" />
+                    </DataTrigger>
+                </Border.Triggers>
+            </Border>
+
+            <VerticalStackLayout Spacing="2" HorizontalOptions="Center" Margin="0,4">
+                <Label Text="Monto" Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" />
+                <Entry Text="{Binding MontoTexto}" Placeholder="0,00" Keyboard="Numeric" FontSize="36" FontAttributes="Bold"
+                       HorizontalTextAlignment="Center" MinimumWidthRequest="200" IsEnabled="{Binding PuedeEditar}"
+                       TextColor="{Binding ColorMonto, Converter={StaticResource TextoAColor}}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8" IsVisible="{Binding NoEsTransferencia}">
+                <Label Text="Categoría" Style="{StaticResource Etiqueta}" />
+                <FlexLayout BindableLayout.ItemsSource="{Binding Categorias}" Wrap="Wrap" JustifyContent="Start">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:Categoria">
+                            <Border Style="{StaticResource Chip}" Margin="0,0,6,6" Padding="10,6">
+                                <HorizontalStackLayout Spacing="4">
+                                    <Label Text="{Binding Icono}" />
+                                    <Label Text="{Binding Nombre}" FontSize="12" />
+                                </HorizontalStackLayout>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RegistrarMovimientoViewModel}}, Path=SeleccionarCategoriaCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+                <Border Style="{StaticResource Campo}">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label Text="Seleccionada:" Style="{StaticResource TextoSecundario}" VerticalOptions="Center" Margin="0,0,8,0" />
+                        <Label Grid.Column="1" Text="{Binding CategoriaTexto}" FontAttributes="Bold" VerticalOptions="Center" Padding="0,8" />
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6" IsVisible="{Binding NoEsTransferencia}">
+                <Label Text="Descripción" Style="{StaticResource Etiqueta}" />
+                <Border Style="{StaticResource Campo}">
+                    <Entry Text="{Binding Nombre}" Placeholder="Ej: Pizza con amigos" MaxLength="80" IsEnabled="{Binding PuedeEditar}" />
+                </Border>
+            </VerticalStackLayout>
+
+            <Label Text="Cuenta" Style="{StaticResource Etiqueta}" IsVisible="{Binding NoEsTransferencia}" />
+            <Label Text="Cuenta de origen" Style="{StaticResource Etiqueta}" IsVisible="{Binding EsTransferencia}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding Cuentas}" SelectedItem="{Binding CuentaSeleccionada}" Title="Selecciona una cuenta" IsEnabled="{Binding PuedeEditar}" />
+            </Border>
+
+            <VerticalStackLayout Spacing="6" IsVisible="{Binding EsTransferencia}">
+                <Label Text="Cuenta de destino" Style="{StaticResource Etiqueta}" IsVisible="{Binding PuedeEditar}" />
+                <Border Style="{StaticResource Campo}" IsVisible="{Binding PuedeEditar}">
+                    <Picker ItemsSource="{Binding Cuentas}" SelectedItem="{Binding CuentaDestino}" Title="Selecciona la cuenta de destino" />
+                </Border>
+            </VerticalStackLayout>
+
+            <Label Text="Fecha" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <DatePicker Date="{Binding Fecha}" Format="dd 'de' MMMM 'de' yyyy" IsEnabled="{Binding PuedeEditar}" />
+            </Border>
+
+            <Label Text="Nota (opcional)" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Editor Text="{Binding Nota}" Placeholder="Detalles adicionales" AutoSize="TextChanges" MaxLength="200" IsEnabled="{Binding PuedeEditar}" />
+            </Border>
+
+            <Button Text="{Binding TextoBoton}" Command="{Binding GuardarCommand}" IsVisible="{Binding PuedeEditar}" Margin="0,6,0,0" />
+            <Button Text="Eliminar movimiento" Style="{StaticResource BotonPeligro}" Command="{Binding EliminarCommand}" IsVisible="{Binding EsEdicion}" />
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" IsVisible="{Binding EstaOcupado}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

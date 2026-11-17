@@ -1,8 +1,65 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              x:Class="GestorGastos.Views.vGaleriaComprobantes"
-             Title="Comprobantes">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Galería de comprobantes" />
+             x:DataType="vm:GaleriaComprobantesViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Escanear" Command="{Binding EscanearCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="18,8,18,0" RowSpacing="10">
+
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <Button Text="‹" Style="{StaticResource BotonCircular}" Command="{Binding MesAnteriorCommand}" />
+            <Label Grid.Column="1" Text="{Binding MesTexto}" Style="{StaticResource Subtitulo}" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Button Grid.Column="2" Text="›" Style="{StaticResource BotonCircular}" Command="{Binding MesSiguienteCommand}" />
+        </Grid>
+
+        <Border Grid.Row="1" Style="{StaticResource Campo}">
+            <Picker ItemsSource="{Binding CategoriasFiltro}" SelectedItem="{Binding CategoriaFiltro}" Title="Filtrar por categoría" />
+        </Border>
+
+        <Label Grid.Row="2" Text="{Binding ResumenTexto}" Style="{StaticResource TextoSecundario}" FontSize="13" />
+
+        <CollectionView Grid.Row="3" ItemsSource="{Binding Comprobantes}" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="20" Spacing="10">
+                    <Label Text="🧾" FontSize="40" HorizontalOptions="Center" />
+                    <Label Text="Aún no hay facturas guardadas en este mes." Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" FontSize="14" />
+                    <Button Text="Escanear una factura" Command="{Binding EscanearCommand}" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:ComprobanteDetalle">
+                    <Border Style="{StaticResource Tarjeta}" Padding="8">
+                        <VerticalStackLayout Spacing="6">
+                            <Border StrokeThickness="0" StrokeShape="RoundRectangle 10" HeightRequest="120"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                                <Image Source="{Binding RutaImagen}" Aspect="AspectFill" />
+                            </Border>
+                            <Label Text="{Binding Titulo}" FontAttributes="Bold" FontSize="12" LineBreakMode="TailTruncation" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding FechaTexto}" Style="{StaticResource TextoSecundario}" />
+                                <Label Grid.Column="1" Text="{Binding MontoTexto}" FontAttributes="Bold" FontSize="12" TextColor="{StaticResource Gasto}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:GaleriaComprobantesViewModel}}, Path=AbrirCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.Footer>
+                <BoxView HeightRequest="24" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+    </Grid>
 </ContentPage>
