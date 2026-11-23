@@ -1,8 +1,66 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
              x:Class="GestorGastos.Views.vRecurrenteForm"
-             Title="Pago recurrente">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Nuevo pago recurrente" />
+             x:DataType="vm:RecurrenteFormViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,12,18,24" Spacing="10">
+
+            <Label Text="Tipo" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding Tipos}" SelectedItem="{Binding Tipo}" />
+            </Border>
+
+            <Label Text="Nombre" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding Nombre}" Placeholder="Ej: Internet, Arriendo, Sueldo" MaxLength="80" />
+            </Border>
+
+            <Label Text="Monto" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding MontoTexto}" Placeholder="0,00" Keyboard="Numeric" />
+            </Border>
+
+            <Label Text="Cuenta" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding Cuentas}" SelectedItem="{Binding CuentaSeleccionada}" Title="Selecciona una cuenta" />
+            </Border>
+
+            <Label Text="Categoría" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding Categorias}" SelectedItem="{Binding CategoriaSeleccionada}" Title="Selecciona una categoría" />
+            </Border>
+
+            <Label Text="Frecuencia" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Picker ItemsSource="{Binding FrecuenciasDisponibles}" SelectedItem="{Binding Frecuencia}" />
+            </Border>
+
+            <Label Text="Fecha del primer pago" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <DatePicker Date="{Binding FechaInicio}" Format="dd 'de' MMMM 'de' yyyy" />
+            </Border>
+
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Tiene fecha de fin" VerticalOptions="Center" FontAttributes="Bold" />
+                <Switch Grid.Column="1" IsToggled="{Binding TieneFechaFin}" />
+            </Grid>
+            <Border Style="{StaticResource Campo}" IsVisible="{Binding TieneFechaFin}">
+                <DatePicker Date="{Binding FechaFin}" Format="dd 'de' MMMM 'de' yyyy" />
+            </Border>
+
+            <Label Text="Nota (opcional)" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Campo}">
+                <Entry Text="{Binding Nota}" MaxLength="200" />
+            </Border>
+
+            <Button Text="Guardar" Command="{Binding GuardarCommand}" Margin="0,8,0,0" />
+            <Button Text="Eliminar" Style="{StaticResource BotonPeligro}" Command="{Binding EliminarCommand}" IsVisible="{Binding EsEdicion}" />
+            <ActivityIndicator IsRunning="{Binding EstaOcupado}" IsVisible="{Binding EstaOcupado}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

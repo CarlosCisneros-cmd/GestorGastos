@@ -1,8 +1,134 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              x:Class="GestorGastos.Views.vCalendario"
-             Title="Calendario">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Calendario" />
+             x:DataType="vm:CalendarioViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="14,8,14,24" Spacing="10">
+
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Button Text="‹" Style="{StaticResource BotonCircular}" Command="{Binding MesAnteriorCommand}" />
+                <Label Grid.Column="1" Text="{Binding MesTexto}" Style="{StaticResource Subtitulo}" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Button Grid.Column="2" Text="›" Style="{StaticResource BotonCircular}" Command="{Binding MesSiguienteCommand}" />
+            </Grid>
+
+            <Border Style="{StaticResource Tarjeta}" Padding="8">
+                <VerticalStackLayout Spacing="4">
+                    <Grid ColumnDefinitions="*,*,*,*,*,*,*">
+                        <Label Grid.Column="0" Text="L" Style="{StaticResource Etiqueta}" HorizontalOptions="Center" />
+                        <Label Grid.Column="1" Text="M" Style="{StaticResource Etiqueta}" HorizontalOptions="Center" />
+                        <Label Grid.Column="2" Text="M" Style="{StaticResource Etiqueta}" HorizontalOptions="Center" />
+                        <Label Grid.Column="3" Text="J" Style="{StaticResource Etiqueta}" HorizontalOptions="Center" />
+                        <Label Grid.Column="4" Text="V" Style="{StaticResource Etiqueta}" HorizontalOptions="Center" />
+                        <Label Grid.Column="5" Text="S" Style="{StaticResource Etiqueta}" HorizontalOptions="Center" />
+                        <Label Grid.Column="6" Text="D" Style="{StaticResource Etiqueta}" HorizontalOptions="Center" />
+                    </Grid>
+                    <CollectionView ItemsSource="{Binding Dias}" SelectionMode="None" HeightRequest="300">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="7" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="m:DiaCalendario">
+                                <Grid HeightRequest="48" Padding="2" Opacity="{Binding Opacidad}">
+                                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="Transparent">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding EsHoy}" Value="True">
+                                                <Setter Property="Stroke" Value="{StaticResource Primario}" />
+                                                <Setter Property="StrokeThickness" Value="1.5" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Border" Binding="{Binding Seleccionado}" Value="True">
+                                                <Setter Property="BackgroundColor" Value="{StaticResource PrimarioSuave}" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                            <Label Text="{Binding Numero}" HorizontalOptions="Center" FontSize="14" />
+                                            <HorizontalStackLayout HorizontalOptions="Center" Spacing="2">
+                                                <BoxView WidthRequest="5" HeightRequest="5" CornerRadius="3" Color="{StaticResource Ingreso}" IsVisible="{Binding TieneIngresos}" />
+                                                <BoxView WidthRequest="5" HeightRequest="5" CornerRadius="3" Color="{StaticResource Gasto}" IsVisible="{Binding TieneGastos}" />
+                                                <BoxView WidthRequest="5" HeightRequest="5" CornerRadius="3" Color="{StaticResource Advertencia}" IsVisible="{Binding TienePagos}" />
+                                            </HorizontalStackLayout>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CalendarioViewModel}}, Path=SeleccionarDiaCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <HorizontalStackLayout Spacing="14" HorizontalOptions="Center">
+                        <HorizontalStackLayout Spacing="4">
+                            <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="{StaticResource Ingreso}" VerticalOptions="Center" />
+                            <Label Text="Ingresos" Style="{StaticResource TextoSecundario}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="4">
+                            <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="{StaticResource Gasto}" VerticalOptions="Center" />
+                            <Label Text="Gastos" Style="{StaticResource TextoSecundario}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="4">
+                            <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="{StaticResource Advertencia}" VerticalOptions="Center" />
+                            <Label Text="Pagos" Style="{StaticResource TextoSecundario}" />
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding DiaTexto}" Style="{StaticResource Subtitulo}" />
+
+            <Border Style="{StaticResource Tarjeta}" Padding="14,6">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding PagosDia}">
+                    <BindableLayout.EmptyView>
+                        <Label Text="Sin pagos programados." Style="{StaticResource TextoSecundario}" Margin="0,8" />
+                    </BindableLayout.EmptyView>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:PagoProximoDetalle">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                                <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{StaticResource AdvertenciaSuave}">
+                                    <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Nombre}" FontAttributes="Bold" />
+                                    <Label Text="Pago pendiente" Style="{StaticResource TextoSecundario}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="{Binding MontoTexto}" FontAttributes="Bold" VerticalOptions="Center" TextColor="{StaticResource Advertencia}" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource Tarjeta}" Padding="14,6">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding MovimientosDia}">
+                    <BindableLayout.EmptyView>
+                        <Label Text="Sin movimientos este día." Style="{StaticResource TextoSecundario}" Margin="0,8" />
+                    </BindableLayout.EmptyView>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:TransaccionDetalle">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,8">
+                                <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{Binding ColorFondoIcono, Converter={StaticResource TextoAColor}}">
+                                    <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Nombre}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding SubtituloCuenta}" Style="{StaticResource TextoSecundario}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="{Binding MontoTexto}" FontAttributes="Bold" VerticalOptions="Center"
+                                       TextColor="{Binding ColorMonto, Converter={StaticResource TextoAColor}}" />
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CalendarioViewModel}}, Path=AbrirMovimientoCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

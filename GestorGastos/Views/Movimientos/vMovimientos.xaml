@@ -1,8 +1,113 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:controls="clr-namespace:GestorGastos.Controls"
+             xmlns:vm="clr-namespace:GestorGastos.ViewModels"
+             xmlns:m="clr-namespace:GestorGastos.Models"
              x:Class="GestorGastos.Views.vMovimientos"
-             Title="Movimientos">
-    <controls:EnConstruccionView Parte="Parte 2" Descripcion="Historial de movimientos" />
+             x:DataType="vm:MovimientosViewModel"
+             Title="{Binding Titulo}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Calendario" Command="{Binding VerCalendarioCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="18,8,18,0" RowSpacing="10">
+
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <Button Text="‹" Style="{StaticResource BotonCircular}" Command="{Binding MesAnteriorCommand}" />
+            <Label Grid.Column="1" Text="{Binding MesTexto}" Style="{StaticResource Subtitulo}" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Button Grid.Column="2" Text="›" Style="{StaticResource BotonCircular}" Command="{Binding MesSiguienteCommand}" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+            <Button Text="Todos" Style="{StaticResource BotonSecundario}" Padding="6" Command="{Binding CambiarFiltroCommand}" CommandParameter="Todos">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding FiltroTodos}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Primario}" />
+                        <Setter Property="TextColor" Value="White" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Grid.Column="1" Text="Gastos" Style="{StaticResource BotonSecundario}" Padding="6" Command="{Binding CambiarFiltroCommand}" CommandParameter="Gastos">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding FiltroGastos}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Primario}" />
+                        <Setter Property="TextColor" Value="White" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Grid.Column="2" Text="Ingresos" Style="{StaticResource BotonSecundario}" Padding="6" Command="{Binding CambiarFiltroCommand}" CommandParameter="Ingresos">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding FiltroIngresos}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Primario}" />
+                        <Setter Property="TextColor" Value="White" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </Grid>
+
+        <Border Grid.Row="2" Style="{StaticResource Campo}">
+            <SearchBar Text="{Binding TextoBusqueda}" Placeholder="Buscar por descripción" SearchCommand="{Binding BuscarCommand}" BackgroundColor="Transparent" />
+        </Border>
+
+        <Border Grid.Row="3" Style="{StaticResource Tarjeta}" Padding="10">
+            <Grid ColumnDefinitions="*,*,*">
+                <VerticalStackLayout HorizontalOptions="Center">
+                    <Label Text="Ingresos" Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" />
+                    <Label Text="{Binding IngresosTexto}" FontAttributes="Bold" TextColor="{StaticResource Ingreso}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                    <Label Text="Gastos" Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" />
+                    <Label Text="{Binding GastosTexto}" FontAttributes="Bold" TextColor="{StaticResource Gasto}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
+                    <Label Text="Balance" Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" />
+                    <Label Text="{Binding BalanceTexto}" FontAttributes="Bold" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <RefreshView Grid.Row="4" IsRefreshing="{Binding EstaRefrescando}" Command="{Binding CargarCommand}">
+            <CollectionView ItemsSource="{Binding Grupos}" IsGrouped="True" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label Text="No hay movimientos en este mes." Style="{StaticResource TextoSecundario}" HorizontalOptions="Center" Margin="0,30" FontSize="14" />
+                </CollectionView.EmptyView>
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate x:DataType="m:GrupoMovimientos">
+                        <Grid ColumnDefinitions="*,Auto" Padding="2,12,2,4">
+                            <Label Text="{Binding Titulo}" Style="{StaticResource Etiqueta}" />
+                            <Label Grid.Column="1" Text="{Binding TotalTexto}" Style="{StaticResource Etiqueta}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:TransaccionDetalle">
+                        <Border Style="{StaticResource Tarjeta}" Padding="12,8" Margin="0,0,0,6">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{Binding ColorFondoIcono, Converter={StaticResource TextoAColor}}">
+                                    <Label Text="{Binding Icono}" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <HorizontalStackLayout Spacing="4">
+                                        <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="14" LineBreakMode="TailTruncation" MaximumWidthRequest="190" />
+                                        <Label Text="🧾" FontSize="12" IsVisible="{Binding TieneComprobante}" />
+                                    </HorizontalStackLayout>
+                                    <Label Text="{Binding SubtituloCuenta}" Style="{StaticResource TextoSecundario}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="{Binding MontoTexto}" FontAttributes="Bold" VerticalOptions="Center"
+                                       TextColor="{Binding ColorMonto, Converter={StaticResource TextoAColor}}" />
+                            </Grid>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MovimientosViewModel}}, Path=AbrirCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="24" Color="Transparent" />
+                </CollectionView.Footer>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
 </ContentPage>
