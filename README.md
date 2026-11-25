@@ -9,8 +9,8 @@ Proyecto final de la asignatura **Desarrollo de Aplicaciones Móviles** — Univ
 | Integrante | Parte desarrollada |
 |---|---|
 | Carlos Alejandro Cisneros Lugo | Parte 1: base del proyecto, inicio de sesión, inicio, cuentas, categorías y ajustes. Integración final, servicio web (Supabase) e inicio de sesión con Google |
-| Daniel Quiñonez | Parte 2: registrar movimientos, historial, calendario, pagos recurrentes, próximos pagos y comprobantes |
-| Efrain Salazar | Parte 3: presupuestos con alertas, metas de ahorro y deudas |
+| Daniel Alexander Quiñonez Granda | Parte 2: registrar movimientos, historial, calendario, pagos recurrentes, próximos pagos y comprobantes |
+| Efrain Paul Salazar Caz | Parte 3: presupuestos con alertas, metas de ahorro y deudas |
 
 ## Tecnologías
 
