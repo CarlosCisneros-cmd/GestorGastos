@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace GestorGastos.Models;
 
@@ -18,6 +18,10 @@ public partial class DiaCalendario : ObservableObject
     public bool TieneGastos { get; set; }
 
     public bool TienePagos { get; set; }
+
+    public int Fila { get; set; }
+
+    public int Columna { get; set; }
 
     public string Numero => EsDelMes ? Fecha.Day.ToString() : string.Empty;
 

@@ -1,4 +1,3 @@
-﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GestorGastos.Configuracion;
@@ -25,11 +24,16 @@ public partial class CalendarioViewModel : BaseViewModel
     [ObservableProperty]
     private DiaCalendario? diaSeleccionado;
 
-    public ObservableCollection<DiaCalendario> Dias { get; } = new();
+    // Se usan listas que se reemplazan completas (una sola actualización de pantalla)
+    // en lugar de ObservableCollection, que redibuja el calendario día por día y lo vuelve lento.
+    [ObservableProperty]
+    private List<DiaCalendario> dias = new();
 
-    public ObservableCollection<TransaccionDetalle> MovimientosDia { get; } = new();
+    [ObservableProperty]
+    private List<TransaccionDetalle> movimientosDia = new();
 
-    public ObservableCollection<PagoProximoDetalle> PagosDia { get; } = new();
+    [ObservableProperty]
+    private List<PagoProximoDetalle> pagosDia = new();
 
     public List<string> NombresDias { get; } = new() { "L", "M", "M", "J", "V", "S", "D" };
 
@@ -49,6 +53,11 @@ public partial class CalendarioViewModel : BaseViewModel
             _movimientosMes = await _transacciones.ObtenerAsync(new FiltroTransacciones { Desde = _mes, Hasta = fin });
             _pagosMes = await _pagos.ObtenerEnRangoAsync(_mes, fin);
 
+            // Se agrupa una sola vez por fecha en lugar de recorrer todos los movimientos por cada día
+            var ingresosPorDia = _movimientosMes.Where(m => m.EsIngreso && !m.EsTransferencia).Select(m => m.Fecha.Date).ToHashSet();
+            var gastosPorDia = _movimientosMes.Where(m => !m.EsIngreso && !m.EsTransferencia).Select(m => m.Fecha.Date).ToHashSet();
+            var pagosPorDia = _pagosMes.Select(p => p.FechaVencimiento.Date).ToHashSet();
+
             var dias = new List<DiaCalendario>();
             var inicio = Periodos.InicioSemana(_mes);
             for (var i = 0; i < 42; i++)
@@ -58,15 +67,17 @@ public partial class CalendarioViewModel : BaseViewModel
                 dias.Add(new DiaCalendario
                 {
                     Fecha = fecha,
+                    Fila = i / 7,
+                    Columna = i % 7,
                     EsDelMes = delMes,
                     EsHoy = fecha == DateTime.Today,
-                    TieneIngresos = delMes && _movimientosMes.Any(m => m.Fecha.Date == fecha && m.EsIngreso && !m.EsTransferencia),
-                    TieneGastos = delMes && _movimientosMes.Any(m => m.Fecha.Date == fecha && !m.EsIngreso && !m.EsTransferencia),
-                    TienePagos = delMes && _pagosMes.Any(p => p.FechaVencimiento.Date == fecha)
+                    TieneIngresos = delMes && ingresosPorDia.Contains(fecha),
+                    TieneGastos = delMes && gastosPorDia.Contains(fecha),
+                    TienePagos = delMes && pagosPorDia.Contains(fecha)
                 });
             }
 
-            Dias.ReemplazarCon(dias);
+            Dias = dias;
 
             var seleccion = DiaSeleccionado?.Fecha;
             var aSeleccionar = Dias.FirstOrDefault(d => d.EsDelMes && d.Fecha == seleccion)
@@ -96,8 +107,8 @@ public partial class CalendarioViewModel : BaseViewModel
         dia.Seleccionado = true;
         DiaSeleccionado = dia;
         DiaTexto = Formato.DiaTitulo(dia.Fecha);
-        MovimientosDia.ReemplazarCon(_movimientosMes.Where(m => m.Fecha.Date == dia.Fecha));
-        PagosDia.ReemplazarCon(_pagosMes.Where(p => p.FechaVencimiento.Date == dia.Fecha));
+        MovimientosDia = _movimientosMes.Where(m => m.Fecha.Date == dia.Fecha).ToList();
+        PagosDia = _pagosMes.Where(p => p.FechaVencimiento.Date == dia.Fecha).ToList();
     }
 
     [RelayCommand]

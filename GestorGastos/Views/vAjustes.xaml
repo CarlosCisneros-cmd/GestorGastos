@@ -109,6 +109,26 @@
                 </VerticalStackLayout>
             </Border>
 
+            <Label Text="Nube (web service)" Style="{StaticResource Etiqueta}" />
+            <Border Style="{StaticResource Tarjeta}" Padding="14,10">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Border Style="{StaticResource IconoCirculo}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimarioSuave}, Dark={StaticResource PrimarioSuaveOscuro}}">
+                            <Label Text="☁️" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="Respaldo en la nube" FontAttributes="Bold" />
+                            <Label Text="{Binding EstadoNube}" Style="{StaticResource TextoSecundario}" />
+                        </VerticalStackLayout>
+                        <ActivityIndicator Grid.Column="2" IsRunning="{Binding NubeOcupada}" IsVisible="{Binding NubeOcupada}" WidthRequest="22" HeightRequest="22" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Text="Sincronizar ahora" Command="{Binding SincronizarCommand}" />
+                        <Button Grid.Column="1" Text="Restaurar" Style="{StaticResource BotonSecundario}" Command="{Binding RestaurarCommand}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
             <Button Text="Cerrar sesión" Style="{StaticResource BotonPeligro}" Command="{Binding CerrarSesionCommand}" Margin="0,8,0,0" />
 
         </VerticalStackLayout>

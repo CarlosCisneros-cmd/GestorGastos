@@ -1,5 +1,7 @@
 using GestorGastos.Data;
+using GestorGastos.Helpers;
 using GestorGastos.Models;
+using GestorGastos.Services;
 using SQLite;
 
 namespace GestorGastos.Repositories;
@@ -20,11 +22,13 @@ LEFT JOIN Cuentas a ON a.Id = t.CuentaId";
 
     private readonly BaseDatos _bd;
     private readonly IAlertaPresupuestoService _alertas;
+    private readonly NotificacionService _notificaciones;
 
-    public TransaccionRepository(BaseDatos bd, IAlertaPresupuestoService alertas)
+    public TransaccionRepository(BaseDatos bd, IAlertaPresupuestoService alertas, NotificacionService notificaciones)
     {
         _bd = bd;
         _alertas = alertas;
+        _notificaciones = notificaciones;
     }
 
     public async Task<List<TransaccionDetalle>> ObtenerRecientesAsync(int cantidad)
@@ -109,6 +113,22 @@ LEFT JOIN Cuentas a ON a.Id = t.CuentaId";
             : transaccion.Nombre.Trim();
 
         var conexion = await _bd.ConexionAsync();
+
+        // Validar que la cuenta tenga saldo suficiente
+        var cuenta = await conexion.FindAsync<Cuenta>(transaccion.CuentaId)
+            ?? throw new InvalidOperationException("La cuenta seleccionada ya no existe.");
+        var saldoAntes = cuenta.Saldo;
+        if (transaccion.Id != 0)
+        {
+            var guardada = await conexion.FindAsync<Transaccion>(transaccion.Id);
+            if (guardada is not null && guardada.CuentaId == transaccion.CuentaId)
+            {
+                saldoAntes -= Efecto(guardada);
+            }
+        }
+        var saldoDespues = saldoAntes + Efecto(transaccion);
+        ValidarSaldoSuficiente(cuenta, saldoAntes, saldoDespues, transaccion.Monto);
+
         await conexion.RunInTransactionAsync(db =>
         {
             if (transaccion.Id == 0)
@@ -140,6 +160,8 @@ LEFT JOIN Cuentas a ON a.Id = t.CuentaId";
                 System.Diagnostics.Debug.WriteLine($"Error al verificar presupuesto: {ex.Message}");
             }
         }
+
+        await AvisarSaldoBajoAsync(cuenta, saldoAntes, saldoDespues);
 
         return transaccion.Id;
     }
@@ -227,12 +249,14 @@ LEFT JOIN Cuentas a ON a.Id = t.CuentaId";
             throw new InvalidOperationException("Una de las cuentas ya no existe.");
         }
 
+        monto = Math.Round(monto, 2);
+        ValidarSaldoSuficiente(origen, origen.Saldo, origen.Saldo - monto, monto);
+
         var categoria = await conexion.Table<Categoria>()
             .Where(c => c.Nombre == CategoriasEspeciales.Transferencia)
             .FirstOrDefaultAsync();
 
         var grupo = Guid.NewGuid().ToString("N");
-        monto = Math.Round(monto, 2);
 
         var salida = new Transaccion
         {
@@ -267,6 +291,8 @@ LEFT JOIN Cuentas a ON a.Id = t.CuentaId";
             AjustarSaldo(db, origen.Id, -monto);
             AjustarSaldo(db, destino.Id, monto);
         });
+
+        await AvisarSaldoBajoAsync(origen, origen.Saldo, origen.Saldo - monto);
     }
 
     public async Task<(decimal Ingresos, decimal Gastos)> TotalesDelMesAsync(DateTime mes)
@@ -333,6 +359,40 @@ WHERE Tipo = ? AND EsTransferencia = 0 AND Fecha >= ? AND Fecha < ?";
         return transaccion.Tipo;
     }
 
+    // Las tarjetas de crédito pueden quedar en negativo (es lo que se debe)
+    private static bool PermiteSaldoNegativo(Cuenta cuenta) => cuenta.Tipo == TiposCuenta.TarjetaCredito;
+
+    private static void ValidarSaldoSuficiente(Cuenta cuenta, decimal saldoAntes, decimal saldoDespues, decimal monto)
+    {
+        if (PermiteSaldoNegativo(cuenta) || saldoDespues >= 0 || saldoDespues >= saldoAntes)
+        {
+            return;
+        }
+
+        var disponible = Math.Max(saldoAntes, 0);
+        throw new SaldoInsuficienteException(
+            $"No tienes saldo suficiente en {cuenta.Nombre}.\n\n" +
+            $"Disponible: {Formato.Moneda(disponible)}\n" +
+            $"Monto que intentas usar: {Formato.Moneda(monto)}\n\n" +
+            "Registra un ingreso, haz una transferencia a esta cuenta o elige otra cuenta.");
+    }
+
+    private async Task AvisarSaldoBajoAsync(Cuenta cuenta, decimal saldoAntes, decimal saldoDespues)
+    {
+        if (PermiteSaldoNegativo(cuenta) || saldoDespues >= saldoAntes)
+        {
+            return;
+        }
+
+        var umbral = Preferencias.SaldoMinimoAviso;
+        if (saldoAntes >= umbral && saldoDespues < umbral)
+        {
+            await _notificaciones.MostrarAsync(
+                $"⚠️ Saldo bajo en {cuenta.Nombre}",
+                $"Te quedan {Formato.Moneda(saldoDespues)}. Estás gastando mucho, revisa tus gastos antes de seguir.");
+        }
+    }
+
     private static decimal Efecto(Transaccion transaccion)
     {
         return transaccion.Tipo == TiposMovimiento.Ingreso ? transaccion.Monto : -transaccion.Monto;
@@ -348,5 +408,12 @@ WHERE Tipo = ? AND EsTransferencia = 0 AND Fecha >= ? AND Fecha < ?";
 
         cuenta.Saldo = Math.Round(cuenta.Saldo + diferencia, 2);
         db.Update(cuenta);
+    }
+}
+
+public class SaldoInsuficienteException : InvalidOperationException
+{
+    public SaldoInsuficienteException(string mensaje) : base(mensaje)
+    {
     }
 }
