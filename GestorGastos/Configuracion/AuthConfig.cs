@@ -2,9 +2,9 @@ namespace GestorGastos.Configuracion;
 
 public static class AuthConfig
 {
-    public const string GoogleClientId = "TU_CLIENT_ID.apps.googleusercontent.com";
+    public const string GoogleClientId = "510403353694-t468sblviue7u9985irt7lqk25jttmop.apps.googleusercontent.com";
 
-    public const string EsquemaRetorno = "com.googleusercontent.apps.TU_CLIENT_ID";
+    public const string EsquemaRetorno = "com.googleusercontent.apps.510403353694-t468sblviue7u9985irt7lqk25jttmop";
 
     public const string FirebaseApiKey = "";
 
