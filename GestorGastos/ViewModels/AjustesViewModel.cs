@@ -10,7 +10,14 @@ public partial class AjustesViewModel : BaseViewModel
 {
     private readonly SesionService _sesion;
     private readonly BiometriaService _biometria;
+    private readonly SincronizacionService _sync;
     private bool _cargando;
+
+    [ObservableProperty]
+    private string estadoNube = string.Empty;
+
+    [ObservableProperty]
+    private bool nubeOcupada;
 
     [ObservableProperty]
     private string nombre = string.Empty;
@@ -42,11 +49,46 @@ public partial class AjustesViewModel : BaseViewModel
 
     public List<string> Temas { get; } = new() { "Claro", "Oscuro", "Sistema" };
 
-    public AjustesViewModel(SesionService sesion, BiometriaService biometria)
+    public AjustesViewModel(SesionService sesion, BiometriaService biometria, SincronizacionService sync)
     {
         _sesion = sesion;
         _biometria = biometria;
+        _sync = sync;
         Titulo = "Ajustes";
+        _sync.EstadoCambiado += () => MainThread.BeginInvokeOnMainThread(ActualizarNube);
+    }
+
+    private void ActualizarNube()
+    {
+        EstadoNube = _sync.Estado;
+        NubeOcupada = _sync.Sincronizando;
+    }
+
+    [RelayCommand]
+    private async Task SincronizarAsync()
+    {
+        _sync.Iniciar();
+        var ok = await _sync.SubirAsync();
+        ActualizarNube();
+        await Dialogos.AlertaAsync(ok ? "Sincronizado" : "No se pudo sincronizar", _sync.Estado);
+    }
+
+    [RelayCommand]
+    private async Task RestaurarAsync()
+    {
+        var confirmar = await Dialogos.ConfirmarAsync("Restaurar desde la nube",
+            "Se reemplazarán los datos de este teléfono por los guardados en la nube. ¿Continuar?", "Restaurar");
+        if (!confirmar)
+        {
+            return;
+        }
+
+        await EjecutarAsync(async () =>
+        {
+            var total = await _sync.DescargarAsync();
+            ActualizarNube();
+            await Dialogos.AlertaAsync("Restauración", total > 0 ? $"Se descargaron {total} registros de la nube." : _sync.Estado);
+        });
     }
 
     public void Cargar()
@@ -71,6 +113,7 @@ public partial class AjustesViewModel : BaseViewModel
         MonedaSeleccionada = Preferencias.Moneda;
         TemaSeleccionado = Preferencias.Tema;
         AlertasActivas = Preferencias.AlertasPresupuestoActivas;
+        ActualizarNube();
         _cargando = false;
     }
 

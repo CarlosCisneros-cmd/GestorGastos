@@ -1,4 +1,4 @@
-﻿using GestorGastos.Data;
+using GestorGastos.Data;
 using GestorGastos.Helpers;
 using GestorGastos.Models;
 
@@ -116,7 +116,15 @@ ORDER BY r.Activo DESC, r.ProximaFecha";
             var vueltas = 0;
             while (recurrente.Activo && recurrente.ProximaFecha.Date <= hoy && vueltas < 60)
             {
-                await RegistrarOcurrenciaAsync(recurrente, recurrente.ProximaFecha);
+                try
+                {
+                    await RegistrarOcurrenciaAsync(recurrente, recurrente.ProximaFecha);
+                }
+                catch (SaldoInsuficienteException)
+                {
+                    // Sin saldo: el pago queda pendiente en "Próximos pagos" hasta que haya dinero
+                    break;
+                }
                 generados++;
                 vueltas++;
             }

@@ -29,6 +29,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<ResumenRepository>();
         builder.Services.AddSingleton<IAlertaPresupuestoService, AlertaPresupuestoNula>();
 
+        // Web service: sincronización con la base en la nube (Supabase)
+        builder.Services.AddSingleton<SincronizacionService>();
+        builder.Services.AddSingleton<ITareaInicio, SincronizacionInicialTarea>();
+
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<InicioViewModel>();
         builder.Services.AddTransient<MasViewModel>();

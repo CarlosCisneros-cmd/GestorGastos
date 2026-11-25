@@ -13,6 +13,12 @@ public class BaseDatos
 
     public string ArchivoActual { get; private set; } = "gastos_invitado.db3";
 
+    /// <summary>Identificador del usuario (se usa como usuario_id en la nube).</summary>
+    public string UsuarioId { get; private set; } = "invitado";
+
+    /// <summary>Se dispara cada vez que se inserta, actualiza o elimina un registro.</summary>
+    public event Action? DatosCambiados;
+
     public void SeleccionarUsuario(string googleId)
     {
         var limpio = new string(googleId.Where(char.IsLetterOrDigit).ToArray());
@@ -21,6 +27,7 @@ public class BaseDatos
             limpio = "invitado";
         }
         ArchivoActual = $"gastos_{limpio}.db3";
+        UsuarioId = limpio;
     }
 
     public async Task<SQLiteAsyncConnection> ConexionAsync()
@@ -62,6 +69,8 @@ public class BaseDatos
                 typeof(CuotaDeuda));
 
             await SembrarCategoriasAsync(conexion);
+
+            conexion.GetConnection().TableChanged += (_, _) => DatosCambiados?.Invoke();
 
             _conexion = conexion;
             _archivoAbierto = ArchivoActual;

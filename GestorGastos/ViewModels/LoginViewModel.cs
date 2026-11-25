@@ -26,9 +26,8 @@ public partial class LoginViewModel : BaseViewModel
         _google = google;
         _biometria = biometria;
         _tareas = tareas;
-#if DEBUG
+        // Visible también en la versión final para poder presentar la app sin configurar Google
         EsModoDesarrollo = true;
-#endif
     }
 
     public void Actualizar()
